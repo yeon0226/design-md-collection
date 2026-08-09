@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System Analysis: 온전 뷰티 라운지</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --primary:#C1798B; --ink:#3D3535; --canvas:#FFFFFF;
+    --bg-blush:#F4D9DE; --blush-soft:#FAF1F3; --cream:#F8F1EB; --rosewater:#F4E1E5;
+    --near-white:#FDFDFD; --on-dark:#F4EDEA; --divider:#F0E4E1; --border-light:#E9E9E9;
+    --map-neutral:#D9D9D9;
+  }
+  body { background:var(--canvas); color:var(--ink);
+    font-family:Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;
+    letter-spacing:-0.02em; line-height:1.7; }
+  .serif { font-family:"WelcomeOTF Bold","WelcomeOTF Regular",Pretendard,sans-serif; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 32px; }
+  section { padding:88px 0; border-bottom:1px solid var(--divider); }
+  .cat { font-size:12px; font-weight:700; letter-spacing:0; color:var(--primary);
+    text-transform:uppercase; margin-bottom:14px; }
+  .claim { font-size:32px; font-weight:800; letter-spacing:-1.2px; line-height:1.3; margin-bottom:14px; }
+  .lead { font-size:15.5px; opacity:.72; max-width:640px; margin-bottom:42px; }
+  .group-label { font-size:13px; font-weight:700; letter-spacing:0; margin:38px 0 16px; text-transform:uppercase; opacity:.8; }
+
+  .btn-primary { display:inline-block; background:var(--primary); color:#fff; border-radius:5px;
+    padding:11px 24px; font-size:16px; font-weight:500; }
+  .btn-soft { display:inline-block; background:var(--blush-soft); color:var(--ink); border-radius:5px;
+    padding:11px 24px; font-size:16px; font-weight:500; }
+  .btn-outline { display:inline-block; border:1px solid var(--primary); color:var(--ink); border-radius:5px;
+    padding:11px 24px; font-size:16px; font-weight:500; }
+  .btn-sm { display:inline-block; background:var(--primary); color:#fff; border-radius:5px;
+    padding:8px 18px; font-size:14px; font-weight:500; }
+  .pill { display:inline-block; border:1px solid var(--primary); color:var(--primary); border-radius:9999px;
+    padding:6px 16px; font-size:12px; font-weight:600; }
+  .circ { width:44px; height:44px; border-radius:50%; background:var(--canvas); border:1px solid var(--border-light);
+    display:inline-flex; align-items:center; justify-content:center; font-size:15px; }
+
+  /* 톱매터 */
+  .topbar { border-bottom:1px solid var(--divider); padding:14px 0; font-size:12px; opacity:.6; }
+  .toc { display:flex; gap:8px; flex-wrap:wrap; padding:22px 0 0; }
+  .toc a { font-size:11.5px; font-weight:600; color:var(--ink); opacity:.6; text-decoration:none;
+    border:1px solid var(--border-light); border-radius:9999px; padding:4px 12px; }
+  .toc a:hover { color:var(--primary); opacity:1; border-color:var(--primary); }
+  .hero { padding:56px 0 72px; border-bottom:1px solid var(--divider); }
+  .hero-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:48px; align-items:center; }
+  .hero h1 { font-size:42px; font-weight:800; letter-spacing:-1.8px; line-height:1.22; margin:14px 0 18px; }
+  .hero p { font-size:15.5px; opacity:.72; margin-bottom:26px; max-width:520px; }
+  .hero-visual { height:250px; border-radius:0 118px 0 0;
+    background:linear-gradient(135deg,#F4D9DE 0%,#FAF1F3 45%,#C1798B 135%); }
+
+  /* 01 컬러 */
+  .stripe { display:flex; height:12px; border-radius:6px; overflow:hidden; margin-bottom:40px; }
+  .stripe div { flex:1; }
+  .swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(184px,1fr)); gap:16px; }
+  .swatch { border:1px solid var(--border-light); border-radius:9px; overflow:hidden; background:var(--canvas); }
+  .swatch .chip { height:86px; }
+  .swatch .meta { padding:13px 14px 15px; }
+  .swatch .nm { font-size:12.5px; font-weight:700; letter-spacing:0; text-transform:uppercase; }
+  .swatch .hx { font-size:12px; color:var(--primary); font-weight:600; margin:2px 0 7px; }
+  .swatch .ds { font-size:12px; opacity:.62; line-height:1.55; }
+
+  /* 02 타이포 */
+  .type-row { display:grid; grid-template-columns:225px 1fr; gap:32px; align-items:center;
+    padding:20px 0; border-bottom:1px solid var(--divider); }
+  .type-row:last-child { border-bottom:none; }
+  .type-spec { font-size:12px; opacity:.58; line-height:1.7; }
+  .type-spec b { opacity:1; font-size:12.5px; }
+
+  /* 03 버튼 */
+  .btn-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .demo-box { border:1px solid var(--border-light); border-radius:12px; padding:24px; background:var(--near-white); }
+  .demo-name { font-size:11.5px; font-weight:700; color:var(--primary); margin-bottom:15px; letter-spacing:0; text-transform:uppercase; }
+
+  /* 04 제품(시술) 타일 — 엣지 투 엣지 교차 */
+  .tile { padding:52px 48px; display:flex; justify-content:space-between; align-items:center; gap:28px; border-radius:12px; margin-bottom:14px; }
+  .tile .tt { font-size:24px; font-weight:800; letter-spacing:-0.8px; }
+  .tile .ts { font-size:14px; opacity:.72; margin-top:4px; }
+
+  /* 05 스토어 그리드 카드 */
+  .store-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .scard { background:var(--canvas); border:1px solid var(--border-light); border-radius:9px; padding:18px; }
+  .scard .im { height:96px; border-radius:5px; margin-bottom:14px; }
+  .scard .tt { font-size:14.5px; font-weight:600; line-height:1.4; }
+  .scard .pr { font-size:13px; color:var(--primary); font-weight:600; margin-top:6px; }
+
+  /* 06 컨피규레이터/셀렉터/스티키 바 */
+  .tabs { display:flex; background:var(--primary); border-radius:9px 9px 0 0; height:56px; }
+  .tabs div { flex:1; display:flex; flex-direction:column; gap:5px; align-items:center; justify-content:center;
+    color:rgba(255,255,255,.6); font-size:14.5px; }
+  .tabs .on { color:#fff; font-weight:700; }
+  .tabs .on::after { content:""; width:4px; height:4px; border-radius:50%; background:#fff; }
+  .tab-panel { background:var(--near-white); border:1px solid var(--divider); border-top:0;
+    border-radius:0 0 9px 9px; padding:18px 22px; font-size:14px; opacity:.85; }
+  .dots { display:flex; gap:8px; align-items:center; }
+  .dots i { width:6px; height:6px; border-radius:50%; background:var(--ink); opacity:.22; }
+  .dots i.on { background:var(--primary); opacity:1; }
+  .sticky-demo { border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
+  .sticky-demo .body { padding:34px; font-size:13px; opacity:.55; background:var(--near-white); }
+  .sticky-demo .bar { display:flex; justify-content:space-between; align-items:center; background:var(--canvas);
+    border-top:1px solid var(--border-light); padding:14px 22px; }
+
+  /* 07 내비게이션 */
+  .gnb-demo { display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border-light);
+    border-radius:12px; padding:0 26px; height:72px; background:var(--canvas); }
+  .gnb-demo .menu { display:flex; gap:26px; font-size:15px; }
+
+  /* 08 폼 */
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; opacity:.75; }
+  .field input, .field textarea { width:100%; border:1px solid var(--border-light); border-radius:5px;
+    background:var(--canvas); padding:11px 13px; font-size:14px; font-family:inherit; color:var(--ink); }
+  .field input:focus, .field textarea:focus { outline:2px solid var(--primary); border-color:transparent; }
+
+  /* 09/10 스케일 */
+  .space-row { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+  .space-row .lb { width:132px; font-size:12.5px; opacity:.66; }
+  .space-row .bar { height:13px; background:var(--primary); border-radius:3px; opacity:.85; }
+  .radius-row { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end; }
+  .radius-box { width:116px; }
+  .radius-box .shape { height:76px; background:var(--bg-blush); border:1px solid var(--rosewater); }
+  .radius-box .lb { font-size:12px; margin-top:8px; opacity:.66; }
+
+  /* 11 엘리베이션 */
+  .elev-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .elev { border-radius:9px; padding:22px 18px; font-size:12.5px; }
+  .elev b { display:block; font-size:13px; margin-bottom:6px; }
+
+  /* 12 반응형 */
+  .bp-table { width:100%; border-collapse:collapse; font-size:13.5px; margin-bottom:28px; }
+  .bp-table th, .bp-table td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--divider); }
+  .bp-table th { font-size:12px; text-transform:uppercase; letter-spacing:0; opacity:.6; }
+  .vp-badges { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .vp-badges span { border:1px solid var(--border-light); border-radius:9999px; padding:5px 14px;
+    font-size:12px; font-weight:600; }
+  .phones { display:flex; gap:24px; flex-wrap:wrap; margin-top:28px; }
+  .phone { width:190px; border:1px solid var(--border-light); border-radius:18px; overflow:hidden; background:var(--canvas); }
+  .phone .bar-top { height:16px; background:var(--near-white); border-bottom:1px solid var(--divider); }
+  .phone .scr { padding:15px 13px; }
+  .phone .lb { font-size:11px; opacity:.55; text-align:center; padding:9px 0 11px; }
+
+  .meta-footer { padding:44px 0 64px; display:flex; gap:56px; font-size:12px; opacity:.62; flex-wrap:wrap; }
+  .meta-footer b { display:block; opacity:1; margin-bottom:2px; }
+  .meta-footer a { color:var(--primary); text-decoration:none; }
+
+  @media (max-width:820px) {
+    .hero-grid, .btn-grid { grid-template-columns:1fr; }
+    .store-grid, .elev-grid { grid-template-columns:repeat(2,1fr); }
+    .hero h1 { font-size:30px; } .claim { font-size:25px; }
+    .type-row { grid-template-columns:1fr; gap:8px; }
+    .tile { flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP MATTER: 브레드크럼 + TOC ═══ -->
+<div class="topbar"><div class="wrap">design-md-collection / onjeon-beauty-lounge / preview</div></div>
+<div class="wrap toc">
+  <a href="#s01">01 Color</a><a href="#s02">02 Typography</a><a href="#s03">03 Buttons</a>
+  <a href="#s04">04 Tiles</a><a href="#s05">05 Cards</a><a href="#s06">06 Selector·Sticky</a>
+  <a href="#s07">07 Navigation</a><a href="#s08">08 Forms</a><a href="#s09">09 Spacing</a>
+  <a href="#s10">10 Radius</a><a href="#s11">11 Elevation</a><a href="#s12">12 Responsive</a>
+</div>
+
+<!-- ═══ 히어로 ═══ -->
+<div class="hero"><div class="wrap">
+  <div class="hero-grid">
+    <div>
+      <div class="cat">Design System Analysis</div>
+      <h1 class="serif">Design System<br>Analysis of<br>온전 뷰티 라운지</h1>
+      <p>핑크 파스텔 배경 위에 뉴트럴 차콜 타이포가 얹힌 프라이빗 뷰티 라운지 시스템.
+      포인트는 더스티 핑크 하나만 쓰고, 진한 차콜 푸터가 페이지를 묵직하게 마무리한다.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <span class="btn-primary">예약하기</span>
+        <span class="btn-outline">카카오톡 1:1 상담하기</span>
+      </div>
+    </div>
+    <div class="hero-visual"></div>
+  </div>
+</div></div>
+
+<!-- ═══ 01 COLOR PALETTE ═══ -->
+<section id="s01"><div class="wrap">
+  <div class="cat">01 · Color Palette</div>
+  <div class="claim">포인트 컬러는 더스티 핑크 하나, 배경은 네 가지 파스텔</div>
+  <p class="lead">더스티 핑크는 버튼·탭·별점·불릿 같은 포인트 자리에만 쓰고,
+  텍스트 색은 언제나 차콜 한 가지로 유지한다.</p>
+
+  <div class="group-label">Brand &amp; Accent</div>
+  <div class="stripe">
+    <div style="background:#F4D9DE"></div><div style="background:#FAF1F3"></div>
+    <div style="background:#F8F1EB"></div><div style="background:#F4E1E5"></div>
+    <div style="background:#C1798B"></div><div style="background:#3D3535"></div>
+  </div>
+  <div class="swatches">
+    <div class="swatch"><div class="chip" style="background:#C1798B"></div><div class="meta">
+      <div class="nm">Primary</div><div class="hx">#C1798B</div>
+      <div class="ds">유일한 브랜드 포인트. CTA·탭 바·별점·STEP 라벨·불릿·아웃라인 전용.</div></div></div>
+  </div>
+
+  <div class="group-label">Surface</div>
+  <div class="swatches">
+    <div class="swatch"><div class="chip" style="background:#FFFFFF;border-bottom:1px solid #E9E9E9"></div><div class="meta">
+      <div class="nm">Canvas</div><div class="hx">#FFFFFF</div><div class="ds">기본 페이지 배경, 카드·보드 표면.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F4D9DE"></div><div class="meta">
+      <div class="nm">BG-Blush</div><div class="hx">#F4D9DE</div><div class="ds">히어로·최종 CTA 섹션 — 무드를 여닫는 대문 색.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#FAF1F3"></div><div class="meta">
+      <div class="nm">Blush-Soft</div><div class="hx">#FAF1F3</div><div class="ds">3-Step 섹션, 소프트 버튼 배경.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F8F1EB"></div><div class="meta">
+      <div class="nm">Warm Cream</div><div class="hx">#F8F1EB</div><div class="ds">리뷰 섹션 — 핑크 연속을 끊는 보조 온도.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F4E1E5"></div><div class="meta">
+      <div class="nm">Rosewater</div><div class="hx">#F4E1E5</div><div class="ds">프라이스 보드 섹션 배경.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#FDFDFD;border-bottom:1px solid #E9E9E9"></div><div class="meta">
+      <div class="nm">Near-White</div><div class="hx">#FDFDFD</div><div class="ds">탭 콘텐츠 패널.</div></div></div>
+  </div>
+
+  <div class="group-label">Text &amp; Hairlines</div>
+  <div class="swatches">
+    <div class="swatch"><div class="chip" style="background:#3D3535"></div><div class="meta">
+      <div class="nm">Ink</div><div class="hx">#3D3535</div><div class="ds">모든 텍스트의 단일 색. 푸터에서는 배경으로 반전.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F4EDEA;border-bottom:1px solid #E9E9E9"></div><div class="meta">
+      <div class="nm">On-Dark</div><div class="hx">#F4EDEA</div><div class="ds">딥 차콜 푸터 위 라이트 텍스트.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F0E4E1"></div><div class="meta">
+      <div class="nm">Divider</div><div class="hx">#F0E4E1</div><div class="ds">가격표 행 구분선 1px — 유일하게 허용된 라인.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#E9E9E9"></div><div class="meta">
+      <div class="nm">Border-Light</div><div class="hx">#E9E9E9</div><div class="ds">리뷰 카드 1px 테두리.</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#D9D9D9"></div><div class="meta">
+      <div class="nm">Map-Neutral</div><div class="hx">#D9D9D9</div><div class="ds">지도·콘텐츠 대기 영역 전용.</div></div></div>
+  </div>
+</div></section>
+
+<!-- ═══ 02 TYPOGRAPHY SCALE ═══ -->
+<section id="s02"><div class="wrap">
+  <div class="cat">02 · Typography Scale</div>
+  <div class="claim">제목은 WelcomeOTF, 본문은 Pretendard</div>
+  <p class="lead">30px 이상의 큰 제목과 로고에만 웰컴체를 쓰고, 본문·버튼·캡션은 전부 Pretendard.
+  크기 구분은 서체와 굵기(400/600) 차이로만 주고, 영문 자간은 절대 벌리지 않는다.</p>
+
+  <div class="type-row">
+    <div class="type-spec"><b>display</b><br>WelcomeOTF Bold<br>32px / 700 / lh 1.45 / ls -1.6px<br>히어로 헤드라인</div>
+    <div class="serif" style="font-size:32px;font-weight:700;letter-spacing:-1.6px;line-height:1.45;">누군가에게 쫓기듯 받는 관리,<br>이제 멈출 때입니다.</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>title</b><br>WelcomeOTF Regular<br>30px / 400 / lh 43px / ls 0<br>섹션 타이틀</div>
+    <div class="serif" style="font-size:30px;font-weight:400;line-height:43px;">숨김없이 투명한, 프라이스 보드</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>title-strong</b><br>WelcomeOTF Bold<br>30px / 700 / lh 43px / ls -0.6px<br>전환 섹션 타이틀</div>
+    <div class="serif" style="font-size:30px;font-weight:700;letter-spacing:-0.6px;line-height:43px;">나를 위한 온전한 쉼표</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>subhead</b><br>Pretendard<br>20px / 600 / lh 33px<br>카드 타이틀</div>
+    <div style="font-size:20px;font-weight:600;line-height:33px;">원장 직접 책임 시술</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>body</b><br>Pretendard<br>18px / 400 / lh 29px / ls -0.36px<br>기본 본문</div>
+    <div style="font-size:18px;font-weight:400;letter-spacing:-0.36px;line-height:29px;">예약하신 시간 동안, 이 공간은 오직 고객님 한 분만을 위해 존재합니다.</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>quote</b><br>Pretendard<br>17px / 400 / lh 28px / ls -0.34px<br>리뷰 인용문</div>
+    <div style="font-size:17px;font-weight:400;letter-spacing:-0.34px;line-height:28px;">"조용하고 프라이빗해서 시술받는 내내 힐링하는 기분이었어요."</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>button</b><br>Pretendard<br>18px / 500 / ls -0.36px<br>CTA 버튼</div>
+    <div style="font-size:18px;font-weight:500;letter-spacing:-0.36px;">첫 방문 20% 혜택받고 예약하기</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>caption</b><br>Pretendard<br>13px / 400 / ls -0.26px<br>안내 문구·작성자</div>
+    <div style="font-size:13px;font-weight:400;letter-spacing:-0.26px;opacity:.65;">모든 시술은 기본 케어를 포함한 가격입니다.</div>
+  </div>
+  <div class="type-row">
+    <div class="type-spec"><b>nav-link</b><br>Pretendard<br>16px / 400 / ls 0<br>GNB 메뉴</div>
+    <div style="font-size:16px;font-weight:400;">브랜드 철학 · 시술 메뉴 · 포트폴리오 · 원장 소개 · 오시는 길</div>
+  </div>
+</div></section>
+
+<!-- ═══ 03 BUTTON VARIANTS ═══ -->
+<section id="s03"><div class="wrap">
+  <div class="cat">03 · Button Variants</div>
+  <div class="claim">버튼은 딱 두 가지 — 살짝 둥근 사각형과 끝이 둥근 버튼</div>
+  <p class="lead">중요한 버튼일수록 진한 색을 쓴다 — 가장 중요한 예약 버튼만 더스티 핑크,
+  파스텔 배경 위에서는 연한 블러시, 보조 버튼은 테두리만, 링크와 라벨은 끝이 둥근 모양.</p>
+  <div class="btn-grid">
+    <div class="demo-box"><div class="demo-name">button-primary</div><span class="btn-primary">예약하기</span></div>
+    <div class="demo-box" style="background:var(--bg-blush);border-color:var(--rosewater);"><div class="demo-name">button-soft · 파스텔 위</div><span class="btn-soft">첫 방문 20% 혜택받고 예약하기</span></div>
+    <div class="demo-box"><div class="demo-name">button-outline</div><span class="btn-outline">카카오톡 1:1 상담하기</span></div>
+    <div class="demo-box"><div class="demo-name">button-primary-sm · GNB</div><span class="btn-sm">예약하기</span></div>
+    <div class="demo-box"><div class="demo-name">pill-link</div><span class="pill">더 많은 포트폴리오 보기 →</span></div>
+    <div class="demo-box"><div class="demo-name">icon-circular</div>
+      <span class="circ">←</span> <span class="circ">→</span>
+      <span class="circ" style="border-color:var(--primary);">↑</span></div>
+  </div>
+</div></section>
+
+<!-- ═══ 04 PRODUCT TILES ═══ -->
+<section id="s04"><div class="wrap">
+  <div class="cat">04 · Product Tiles</div>
+  <div class="claim">화면 끝까지 꽉 차게 이어지는 이미지 타일</div>
+  <p class="lead">시술·스토리 타일은 파스텔과 차콜을 번갈아 배치해 리듬을 만들고,
+  화면 폭을 꽉 채워 시원하게 보여준다.</p>
+  <div class="tile" style="background:var(--bg-blush);">
+    <div><div class="tt serif">시그니처 네일</div><div class="ts">4주 후에도 방금 받은 것처럼, 완벽한 유지력</div></div>
+    <span class="btn-primary" style="white-space:nowrap;">예약하기</span>
+  </div>
+  <div class="tile" style="background:var(--ink);color:var(--on-dark);">
+    <div><div class="tt serif">하루 딱 4명, 예약된 고객님만</div><div class="ts">온전히 당신에게만 맞춰진 1:1 케어</div></div>
+    <span class="btn-soft" style="white-space:nowrap;">네이버 실시간 예약하기</span>
+  </div>
+  <div class="tile" style="background:var(--cream);">
+    <div><div class="tt serif">무통증 왁싱</div><div class="ts">아프다는 편견을 깨는, 저자극 프리미엄 왁싱</div></div>
+    <span class="btn-outline" style="white-space:nowrap;">자세히 보기</span>
+  </div>
+</div></section>
+
+<!-- ═══ 05 STORE GRID CARDS ═══ -->
+<section id="s05"><div class="wrap">
+  <div class="cat">05 · Store Grid Cards</div>
+  <div class="claim">모서리가 살짝 둥근 흰색 카드</div>
+  <p class="lead">카드에는 그림자를 쓰지 않고, 1px 연한 테두리와 4:5 실사 이미지만 담는다.</p>
+  <div class="store-grid">
+    <div class="scard"><div class="im" style="background:linear-gradient(160deg,#F4D9DE,#EACBD2)"></div>
+      <div class="tt">시그니처 젤 네일</div><div class="pr">00,000원 · 1시간 30분</div></div>
+    <div class="scard"><div class="im" style="background:linear-gradient(160deg,#F4E1E5,#F8F1EB)"></div>
+      <div class="tt">브라질리언 왁싱</div><div class="pr">00,000원 · 1시간</div></div>
+    <div class="scard"><div class="im" style="background:linear-gradient(160deg,#FAF1F3,#F4D9DE)"></div>
+      <div class="tt">발 각질 케어</div><div class="pr">00,000원 · 1시간</div></div>
+    <div class="scard"><div class="im" style="background:linear-gradient(160deg,#F8F1EB,#F4E1E5)"></div>
+      <div class="tt">문제성 손발톱 케어</div><div class="pr">00,000원 · 1시간</div></div>
+  </div>
+</div></section>
+
+<!-- ═══ 06 CONFIGURATOR + SELECTOR + STICKY BAR ═══ -->
+<section id="s06"><div class="wrap">
+  <div class="cat">06 · Selector + Indicator + Sticky Bar</div>
+  <div class="claim">탭으로 고르고, 예약 버튼은 항상 화면 아래에</div>
+  <p class="lead">카테고리는 핑크 탭으로 고르고, 캐러셀 위치는 작은 점으로 표시한다.
+  모바일에서는 예약 바가 화면 아래에 항상 떠 있다.</p>
+  <div class="group-label">Category Selector</div>
+  <div class="tabs"><div class="on">시그니처 네일</div><div>무통증 왁싱</div><div>문제성 케어</div></div>
+  <div class="tab-panel">활성 탭: 화이트 Bold + 4px 도트 · 패널은 near-white, 하단만 9px 라운드</div>
+  <div class="group-label">Carousel Indicator</div>
+  <div style="display:flex;gap:24px;align-items:center;">
+    <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <span class="circ">←</span><span class="circ">→</span>
+  </div>
+  <div class="group-label">Sticky Reservation Bar</div>
+  <div class="sticky-demo">
+    <div class="body">스크롤 콘텐츠 영역</div>
+    <div class="bar">
+      <div><b style="font-size:15px;">온전 뷰티 라운지</b><span style="font-size:12.5px;opacity:.55;margin-left:10px;">100% 예약제</span></div>
+      <span class="btn-sm">네이버 실시간 예약하기</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ 07 NAVIGATION ═══ -->
+<section id="s07"><div class="wrap">
+  <div class="cat">07 · Navigation</div>
+  <div class="claim">한 줄로 깔끔하게 정리된 흰색 메뉴 바</div>
+  <p class="lead">로고(웰컴체)와 메뉴 5개, 핑크 예약 버튼이 한 줄에 놓인다.
+  모바일에서는 메뉴가 햄버거 버튼으로 접히고 예약 버튼은 하단 고정 바로 내려간다.</p>
+  <div class="gnb-demo">
+    <b class="serif" style="font-size:17px;">온전 뷰티 라운지</b>
+    <div class="menu"><span>브랜드 철학</span><span>시술 메뉴</span><span>포트폴리오</span><span>원장 소개</span><span>오시는 길</span></div>
+    <span class="btn-sm">예약하기</span>
+  </div>
+</div></section>
+
+<!-- ═══ 08 FORM ELEMENTS ═══ -->
+<section id="s08"><div class="wrap">
+  <div class="cat">08 · Form Elements</div>
+  <div class="claim">입력창은 평소엔 연한 회색 선, 클릭하면 핑크 테두리</div>
+  <p class="lead">입력창은 1px 연한 테두리에 모서리 5px로 담백하게 두고, 클릭했을 때만 핑크 테두리가 나타난다.</p>
+  <div class="btn-grid">
+    <div class="demo-box" style="grid-column:span 2;">
+      <div class="demo-name">text-input</div>
+      <div class="field"><label>성함</label><input type="text" placeholder="입력 영역"></div>
+      <div class="field" style="margin-bottom:0;"><label>연락처</label><input type="text" placeholder="010-0000-0000"></div>
+    </div>
+    <div class="demo-box">
+      <div class="demo-name">textarea</div>
+      <div class="field" style="margin-bottom:0;"><label>문의 내용</label><textarea rows="4" placeholder="입력 영역"></textarea></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ 09 SPACING SCALE ═══ -->
+<section id="s09"><div class="wrap">
+  <div class="cat">09 · Spacing Scale</div>
+  <div class="claim">섹션 사이 여백은 넉넉하게, 최소 96px</div>
+  <p class="lead">섹션 위아래 여백은 96~120px, 콘텐츠는 1040px 폭 안에서 8px 단위로 맞춘다.</p>
+  <div class="space-row"><div class="lb">xs · 8px</div><div class="bar" style="width:8px"></div></div>
+  <div class="space-row"><div class="lb">sm · 12px</div><div class="bar" style="width:12px"></div></div>
+  <div class="space-row"><div class="lb">md · 16px</div><div class="bar" style="width:16px"></div></div>
+  <div class="space-row"><div class="lb">xl · 24px</div><div class="bar" style="width:24px"></div></div>
+  <div class="space-row"><div class="lb">2xl · 32px</div><div class="bar" style="width:32px"></div></div>
+  <div class="space-row"><div class="lb">4xl · 48px</div><div class="bar" style="width:48px"></div></div>
+  <div class="space-row"><div class="lb">section · 96~120px</div><div class="bar" style="width:120px"></div></div>
+  <div class="space-row"><div class="lb">side-gutter · 200px</div><div class="bar" style="width:200px"></div></div>
+</div></section>
+
+<!-- ═══ 10 BORDER RADIUS SCALE ═══ -->
+<section id="s10"><div class="wrap">
+  <div class="cat">10 · Border Radius Scale</div>
+  <div class="claim">모서리는 조금만 둥글게, 크게 둥근 곳은 딱 한 군데</div>
+  <p class="lead">모서리 둥글기는 5~12px 사이로만 쓰고, 크게 둥글린 곳은 히어로의 184px 한 군데뿐이다.</p>
+  <div class="radius-row">
+    <div class="radius-box"><div class="shape" style="border-radius:5px"></div><div class="lb">xs · 5px — 버튼·입력</div></div>
+    <div class="radius-box"><div class="shape" style="border-radius:9px"></div><div class="lb">sm · 9px — 카드·탭·보드</div></div>
+    <div class="radius-box"><div class="shape" style="border-radius:10px"></div><div class="lb">md · 10px — 포토</div></div>
+    <div class="radius-box"><div class="shape" style="border-radius:12px"></div><div class="lb">lg · 12px — 리뷰·지도</div></div>
+    <div class="radius-box"><div class="shape" style="border-radius:9999px;height:56px"></div><div class="lb">pill · 9999px</div></div>
+    <div class="radius-box" style="width:156px"><div class="shape" style="border-radius:0 78px 0 0;height:96px"></div><div class="lb">fillet · 184px — 한 군데만</div></div>
+  </div>
+</div></section>
+
+<!-- ═══ 11 ELEVATION & DEPTH ═══ -->
+<section id="s11"><div class="wrap">
+  <div class="cat">11 · Elevation &amp; Depth</div>
+  <div class="claim">그림자 대신 배경색 차이로 공간을 나누기</div>
+  <p class="lead">그림자는 전혀 쓰지 않는다. 공간 구분은 다섯 가지 배경색의 밝기 차이,
+  1px 연한 선, 둥근 모서리로만 한다.</p>
+  <div class="elev-grid">
+    <div class="elev" style="background:var(--near-white);border:1px solid var(--divider);">
+      <b>Level 0 · Flat</b>섹션 배경·버튼·탭 바 — 장식 없음</div>
+    <div class="elev" style="background:var(--canvas);border:1px solid var(--border-light);">
+      <b>Level 1 · Hairline</b>리뷰 카드 1px #E9E9E9</div>
+    <div class="elev" style="background:var(--canvas);border-bottom:2px solid var(--divider);border-top:1px solid var(--divider);border-left:1px solid var(--divider);border-right:1px solid var(--divider);border-radius:9px;">
+      <b>Level 1 · Divider</b>가격표 행 1px #F0E4E1</div>
+    <div class="elev" style="background:var(--bg-blush);">
+      <b>Level 2 · Tone Shift</b>배경 밝기 차이로 공간 구분</div>
+  </div>
+</div></section>
+
+<!-- ═══ 12 RESPONSIVE BEHAVIOR ═══ -->
+<section id="s12" style="border-bottom:none;"><div class="wrap">
+  <div class="cat">12 · Responsive Behavior</div>
+  <div class="claim">PC 화면 기준으로 만들고, 모바일은 규칙대로 조정</div>
+  <p class="lead">시안은 1440px PC 화면 기준으로 만들었다. 모바일에서는 기획안 지침대로
+  메뉴를 햄버거 버튼으로 접고, 예약 버튼을 하단 고정 바로 옮긴다.</p>
+  <table class="bp-table">
+    <tr><th>Name</th><th>Width</th><th>Key Changes</th></tr>
+    <tr><td>Desktop</td><td>1440px (시안 기준)</td><td>콘텐츠 1040px · 3-Step·포트폴리오 3컬럼 · 리뷰 2×2</td></tr>
+    <tr><td>Tablet</td><td>확인 불가 — 시안 미제작</td><td>—</td></tr>
+    <tr><td>Mobile</td><td>확인 불가 — 시안 미제작</td><td>메뉴는 햄버거 버튼으로 · 예약 버튼은 하단 고정 바로 · 타이틀 30→24~25px</td></tr>
+  </table>
+  <div class="vp-badges"><span>1440</span><span>1040</span><span>Tablet — 미정</span><span>Mobile — 지침만</span></div>
+  <div style="font-size:13.5px;opacity:.72;">
+    · 터치 타깃: 버튼 최소 44px 높이 유지<br>
+    · 축소 전략: 타이틀 30px → 24~25px (약 80~83%), 그리드는 순차 1컬럼화, 예약 CTA는 하단 고정 바로 분리
+  </div>
+  <div class="phones">
+    <div class="phone"><div class="bar-top"></div>
+      <div class="scr" style="background:var(--bg-blush);">
+        <div class="serif" style="font-size:12.5px;font-weight:700;line-height:1.5;margin-bottom:6px;">누군가에게 쫓기듯<br>받는 관리, 이제 멈출 때</div>
+        <div style="font-size:9px;opacity:.65;margin-bottom:10px;">오직 고객님 한 분만을 위해</div>
+        <span class="btn-sm" style="font-size:9.5px;padding:5px 10px;">예약하기</span>
+      </div><div class="lb">히어로 — 타이틀 축소</div></div>
+    <div class="phone"><div class="bar-top"></div>
+      <div class="scr">
+        <div style="font-size:10.5px;font-weight:600;padding:7px 2px;border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;"><span>시그니처 젤 네일</span><span>00,000원</span></div>
+        <div style="font-size:10.5px;font-weight:600;padding:7px 2px;border-bottom:1px solid var(--divider);display:flex;justify-content:space-between;"><span>이달의 아트</span><span>00,000원</span></div>
+        <div style="font-size:10.5px;font-weight:600;padding:7px 2px;display:flex;justify-content:space-between;"><span>브라질리언 왁싱</span><span>00,000원</span></div>
+      </div><div class="lb">가격표 — 1컬럼 유지</div></div>
+    <div class="phone"><div class="bar-top"></div>
+      <div class="scr" style="padding-bottom:0;">
+        <div style="font-size:9.5px;opacity:.6;margin-bottom:22px;">본문 콘텐츠 영역</div>
+        <div style="background:var(--primary);color:#fff;text-align:center;font-size:10.5px;font-weight:600;padding:9px;border-radius:5px 5px 0 0;">네이버 실시간 예약하기</div>
+      </div><div class="lb">하단 고정 예약 CTA 바</div></div>
+  </div>
+</div></section>
+
+<!-- ═══ FOOTER META ═══ -->
+<div style="border-top:1px solid var(--divider);"><div class="wrap">
+  <div class="meta-footer">
+    <div><b>Name</b>onjeon-beauty-lounge-design-analysis</div>
+    <div><b>Version</b>alpha</div>
+    <div><b>Fonts</b>WelcomeOTF · Pretendard</div>
+    <div><b>Source</b><a href="https://github.com/yeon0226/design-md-collection">yeon0226/design-md-collection</a></div>
+    <div><b>Format</b>getdesign.md preview structure</div>
+  </div>
+</div></div>
+
+</body>
+</html>
